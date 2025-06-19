@@ -1,0 +1,20 @@
+{
+  "name": "Workvivo JWTSSO demo",
+  "version": "1.0.0",
+  "description": "Webserver with JWT SSO login functionality",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "body-parser": "^1.20.3",
+    "dotenv": "^16.4.7",
+    "ejs": "^3.1.9",
+    "express": "^4.18.2",
+    "express-session": "^1.18.1",
+    "jsonwebtoken": "^9.0.2",
+    "morgan": "^1.10.0",
+    "node-jose": "^2.2.0",
+    "rotating-file-stream": "^3.2.6"
+  }
+}

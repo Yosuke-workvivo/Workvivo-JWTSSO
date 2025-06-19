@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome</title>
+    <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="welcome-form">
+            <h2>Welcome!</h2>
+            <h4><%= email %></h4>
+            <small style="color: #666;">Device type: <%= isMobile ? 'Mobile' : 'Desktop' %></small>
+            <form id="actionForm">
+                <input type="hidden" id="userEmail" value="<%= email %>">
+                <input type="hidden" id="jwt-token" value="<%= token %>">
+                <div class="checkbox-container">
+                    <input type="checkbox" id="useUrlParam" name="useUrlParam">
+                    <label for="useUrlParam">Use JWT in URL</label>
+                </div>
+                <button type="button" id="actionButton">Redirect to WorkVivo</button>
+            </form>
+            <div id="message"></div>
+        </div>
+    </div>
+    <div id="notificationModal" class="modal" style="display: none;">
+        <!-- Modal content -->
+        <div class="modal-content">
+          <img src="./images/loading.gif" alt="Loading..." class="loading-gif">
+        </div>
+     </div>
+
+    <script>
+        const modal = document.getElementById('notificationModal');
+        const isMobile = <%= isMobile %>;
+        const useUrlParamCheckbox = document.getElementById('useUrlParam');
+
+        // Force URL param usage for mobile devices
+        if (isMobile) {
+            useUrlParamCheckbox.checked = true;
+            //useUrlParamCheckbox.disabled = true; // Prevent changing on mobile
+        }
+        
+        document.getElementById('actionButton').addEventListener('click', function() {
+            console.log('actionButton clicked: redirect to Workvivo');
+            modal.style.display = "block";
+            const token = document.getElementById('jwt-token').value;
+            const useUrlParam = document.getElementById('useUrlParam').checked;
+            const baseUrl = '<%= workvivoBaseUrl %>';
+
+            if (isMobile) {
+                mobile(token, useUrlParam, baseUrl);
+            } else {
+                desktop(token, useUrlParam, baseUrl);
+            }
+
+        });
+
+        function desktop(token, useUrlParam, baseUrl) {
+            if (useUrlParam) {
+                window.location.href = `${baseUrl}${encodeURIComponent(token)}`;
+            } else {
+                fetch(baseUrl, {
+                    method: 'GET',
+                    headers: {
+                        'x-workvivo-jwt': token
+                    },
+                    credentials: "include"
+                })
+                .then(response => {
+                    console.log('response: ', response);
+                    if (response.redirected) {
+                        window.location.replace(response.url);
+                    } else {
+                        throw new Error('No redirect URL received');
+                    }
+                })
+                .catch(error => {
+                    modal.style.display = "none";
+                    console.error('There was a problem with the operation:', error);
+                    document.getElementById('message').innerHTML = '<p style="color:red;">Error: Failed to redirect to Workvivo</p>';
+                });
+            }
+        };
+
+        function mobile(token, useUrlParam, baseUrl) {
+            if (useUrlParam) {
+                window.location.href = `${baseUrl}${encodeURIComponent(token)}`;
+                modal.style.display = "none";
+            } else {
+                //const mobileUrl = `workvivo://mobile/uuid/${encodeURIComponent(token)}(yosuke-vivo.workvivo.io)`;
+                //window.location.href = mobileUrl;
+                //window.open(mobileUrl);
+                //modal.style.display = "none";
+                fetch(baseUrl, {
+                    method: 'GET',
+                    headers: {
+                        'x-workvivo-jwt': token
+                    },
+                    //mode: 'no-cors',
+                    credentials: "include"
+                })
+                .then(response => {
+                    console.log('response: ', response);
+                    if (response.redirected) {
+                        window.location.replace(response.url);
+                    //} else if (response.type === 'opaque') {
+                    //    const redirectMobileUrl = `https://redirect.workvivo.io/mobile/uuid/${encodeURIComponent(token)}(yosuke-vivo.workvivo.io)`;
+                    //    window.location.href = redirectMobileUrl;
+                    //} else if (response.type === 'opaque') {
+                    //    const redirectMobileUrl = `https://redirect.workvivo.com/mobile/uuid/${encodeURIComponent(token)}(yosuke-vivo.workviovo.io)`;
+                    //    window.location.href = redirectMobileUrl;
+                    } else {    
+                        throw new Error('Unexpected response type');
+                    }
+                    modal.style.display = "none";
+                })
+                .catch(error => {
+                    modal.style.display = "none";
+                    console.error('There was a problem with the operation:', error);
+                    document.getElementById('message').innerHTML = '<p style="color:red;">Error: Failed to redirect to Workvivo</p>';
+                })
+                
+            }
+        };
+        
+    </script>
+</body>
+</html> 

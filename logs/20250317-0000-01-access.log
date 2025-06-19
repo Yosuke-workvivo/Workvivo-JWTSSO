@@ -1,0 +1,1 @@
+2025-03-16T08:34:34.997Z ::ffff:192.168.99.19 - "POST /login HTTP/1.1" 200 45 "https://aaa.aaa.aaa:6443/wvjwtsso/" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36" route=/login body={"email":"user01@aaa.aaa.org","password":"aaaaa"}
