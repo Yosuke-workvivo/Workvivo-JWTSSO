@@ -202,12 +202,11 @@ curl --location 'https://<your-workvivo-instance>.workvivo.com/proxy/redirect/ss
 ```
 workvivo-jwtsso/
 ├── app.js                 # Main application server
-├── generate-token.js      # JWT token generation script
 ├── jwks.json             # JSON Web Key Set
 ├── jwtRS256.key          # Private RSA key
 ├── jwtRS256.key.pub      # Public RSA key
 ├── package.json          # Node.js dependencies
-├── .env                  # Environment variables (create this)
+├── .env.example          # Environment variables (sample)
 ├── logs/                 # Application logs
 ├── public/               # Static files
 │   ├── css/
